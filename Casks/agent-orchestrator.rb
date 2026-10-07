@@ -1,8 +1,8 @@
 cask "agent-orchestrator" do
-  version "0.1.0"
-  sha256 "a44f799d4e10d4c9c6268cc327cb818ebc749f42d7a28943e3b01641666e2fee"
+  version "0.1.1"
+  sha256 "bc7113e35eb83065c2b934fa5eb92ebd4560b86d4a8c8004cf0c48619a81720b"
 
-  url "https://github.com/renickbuettner/homebrew-tap/releases/download/v#{version}/Agent-Orchestrator-#{version}-aarch64.dmg"
+  url "https://github.com/renickbuettner/homebrew-tap/releases/download/v#{version}/Agent-Orchestrator-#{version}-aarch64.pkg"
   name "Agent Orchestrator"
   desc "Local Kanban board that runs CLI coding agents in isolated git worktrees"
   homepage "https://github.com/renickbuettner/homebrew-tap"
@@ -15,12 +15,23 @@ cask "agent-orchestrator" do
   depends_on arch: :arm64
   depends_on macos: :monterey
 
-  app "Agent Orchestrator.app"
+  pkg "Agent-Orchestrator-#{version}-aarch64.pkg"
 
-  uninstall quit: "io.renick.agent-orchestrator"
+  # A pkg cask only forgets the receipt on uninstall: the app must be deleted explicitly.
+  uninstall launchctl: "Agent Orchestrator",
+            quit:      "io.renick.agent-orchestrator",
+            pkgutil:   "io.renick.agent-orchestrator.pkg",
+            delete:    [
+              "/Applications/Agent Orchestrator.app",
+              "~/Library/LaunchAgents/Agent Orchestrator.plist",
+            ]
 
   zap trash: [
     "~/Library/Application Support/io.renick.agent-orchestrator",
-    "~/Library/LaunchAgents/Agent Orchestrator.plist",
+    "~/Library/Caches/io.renick.agent-orchestrator",
+    "~/Library/HTTPStorages/io.renick.agent-orchestrator",
+    "~/Library/Preferences/io.renick.agent-orchestrator.plist",
+    "~/Library/Saved Application State/io.renick.agent-orchestrator.savedState",
+    "~/Library/WebKit/io.renick.agent-orchestrator",
   ]
 end
